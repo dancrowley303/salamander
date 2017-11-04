@@ -4,7 +4,7 @@ namespace com.defrobo.salamander
 {
     public interface IOrderBookUpdater
     {
-        event EventHandler<OrderBookSnapshotEventArgs> Snapshot;
-        //event EventHandler<OrderBookUpdatedEventArgs> Updated;
+        event EventHandler<OrderBookUpdateEventArgs> Snapshot;
+        event EventHandler<OrderBookUpdateEventArgs> Updated;
     }
 }

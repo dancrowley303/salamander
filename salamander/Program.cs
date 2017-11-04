@@ -9,33 +9,34 @@ namespace com.defrobo.salamander
         private static decimal bestAsk;
         private static decimal bestBid;
 
-        private static OrderBook orderBook = new OrderBook();
+        private static OrderBook orderBook;
 
         static void Main(string[] args)
         {
-            var ticker = new Ticker();
+            //var ticker = new Ticker();
             //var executionAlerter = new ExecutionAlerter();
             var orderBookUpdater = new OrderBookUpdater();
+            orderBook = new OrderBook(orderBookUpdater);
             //var logger = new ScreenMarketTicketLogger(ticker);
-            ticker.Updated += Ticker_Updated;
+            //ticker.Updated += Ticker_Updated;
             //executionAlerter.Created += ExecutionAlerter_Created;
-            orderBookUpdater.Snapshot += OrderBookUpdater_Snapshot;
+            orderBookUpdater.Snapshot += OrderBookUpdater_Refresh;
+            orderBookUpdater.Updated += OrderBookUpdater_Refresh;
             //logger.Start();
-            ticker.Start();
+            //ticker.Start();
             //executionAlerter.Start();
             orderBookUpdater.Start();
             string resp = Console.ReadLine();
             //logger.Stop();
-            ticker.Stop();
+            //ticker.Stop();
             //executionAlerter.Stop();
             orderBookUpdater.Stop();
             string resp2 = Console.ReadLine();
         }
 
-        private static void OrderBookUpdater_Snapshot(object sender, OrderBookSnapshotEventArgs e)
+        private static void OrderBookUpdater_Refresh(object sender, OrderBookUpdateEventArgs e)
         {
             Console.Clear();
-            orderBook.Update(e.OrderBookUpdate);
             if (orderBook.Bids.Count == 0 || orderBook.Asks.Count == 0)
                 return;
 

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace com.defrobo.salamander
 {
     public class OrderBook
     {
+        private readonly OrderBookUpdater orderBookUpdater;
         private readonly SortedList<decimal, Order> bids;
         private readonly SortedList<decimal, Order> asks;
 
@@ -30,13 +27,26 @@ namespace com.defrobo.salamander
 
         public decimal MidPrice { get; private set; }
 
-        public OrderBook()
+        public OrderBook(OrderBookUpdater orderBookUpdater)
         {
+            this.orderBookUpdater = orderBookUpdater;
+            this.orderBookUpdater.Snapshot += OrderBookUpdater_Snapshot;
+            this.orderBookUpdater.Updated += OrderBookUpdater_Updated;
             bids = new SortedList<decimal, Order>();
             asks = new SortedList<decimal, Order>();
         }
 
-        public void Update(OrderBookUpdate update)
+        private void OrderBookUpdater_Updated(object sender, OrderBookUpdateEventArgs e)
+        {
+            Update(e.OrderBookUpdate);
+        }
+
+        private void OrderBookUpdater_Snapshot(object sender, OrderBookUpdateEventArgs e)
+        {
+            Update(e.OrderBookUpdate);
+        }
+
+        private void Update(OrderBookUpdate update)
         {
             this.MidPrice = update.MidPrice;
             foreach (var ask in update.Asks)
