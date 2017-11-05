@@ -109,6 +109,7 @@ namespace com.defrobo.salamander.gui
             infoService.Close();
             executionAlerter.Stop();
             ticker.Stop();
+            orderBookUpdater.Stop();
         }
     }
 }
