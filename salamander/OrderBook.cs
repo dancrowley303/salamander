@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace com.defrobo.salamander
 {
@@ -8,20 +9,22 @@ namespace com.defrobo.salamander
         private readonly SortedList<decimal, Order> bids;
         private readonly SortedList<decimal, Order> asks;
 
-        public SortedList<decimal, Order> Bids
+        public List<Order> Bids
         {
             get
             {
-                return bids;
+                var revList = bids.Values.ToList();
+                revList.Reverse();
+                return revList;
             }
         }
 
-        public SortedList<decimal, Order> Asks
+        public List<Order> Asks
 
         {
             get
             {
-                return asks;
+                return asks.Values.ToList();
             }
         }
 

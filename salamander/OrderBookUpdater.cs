@@ -8,15 +8,16 @@ namespace com.defrobo.salamander
     {
         public event EventHandler<OrderBookUpdateEventArgs> Snapshot;
         public event EventHandler<OrderBookUpdateEventArgs> Updated;
+
+        private const string snapshotChannel = "lightning_board_snapshot_BTC_JPY";
+        private const string updateChannel = "lightning_board_BTC_JPY";
         private Pubnub pub;
-        private readonly string channel;
         private SubscribeOperation<string> sub;
         private UnsubscribeOperation<string> unsub;
 
 
-        public OrderBookUpdater(string pubNubSubscribeKey = "sub-c-52a9ab50-291b-11e5-baaa-0619f8945a4f", string channel = "lightning_board_snapshot_BTC_JPY")
+        public OrderBookUpdater(string pubNubSubscribeKey = "sub-c-52a9ab50-291b-11e5-baaa-0619f8945a4f")
         {
-            this.channel = channel;
             pub = new Pubnub(new PNConfiguration() { SubscribeKey = pubNubSubscribeKey });
 
             pub.AddListener(new SubscribeCallbackExt(
@@ -24,13 +25,12 @@ namespace com.defrobo.salamander
                 {
                     if (message != null)
                     {
-                        if (message.Channel.Equals("lightning_board_BTC_JPY"))
+                        if (message.Channel.Equals(updateChannel))
                         {
                             OnUpdated(new OrderBookUpdateEventArgs(message.Message.ToString()));
                         }
-                        if (message.Channel.Equals("lightning_board_snapshot_BTC_JPY"))
+                        if (message.Channel.Equals(snapshotChannel))
                         {
-                            Console.WriteLine("*****SNAPSHOT*******");
                             OnSnapshot(new OrderBookUpdateEventArgs(message.Message.ToString()));
                         }
                     }
@@ -53,8 +53,8 @@ namespace com.defrobo.salamander
                     }
                 }
             ));
-            sub = pub.Subscribe<string>().Channels(new string[] { "lightning_board_snapshot_BTC_JPY", "lightning_board_BTC_JPY" });
-            unsub = pub.Unsubscribe<string>().Channels(new string[] { "lightning_board_snapshot_BTC_JPY", "lightning_board_BTC_JPY" });
+            sub = pub.Subscribe<string>().Channels(new string[] { snapshotChannel, updateChannel });
+            unsub = pub.Unsubscribe<string>().Channels(new string[] { snapshotChannel, updateChannel });
         }
 
         public void Start()

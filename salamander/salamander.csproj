@@ -59,11 +59,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Balance.cs" />
+    <Compile Include="Currency.cs" />
     <Compile Include="Execution.cs" />
     <Compile Include="ExecutionAlerter.cs" />
     <Compile Include="ExecutionEventArgs.cs" />
     <Compile Include="IExecutionAlerter.cs" />
     <Compile Include="IMarketTickLogger.cs" />
+    <Compile Include="InfoService.cs" />
     <Compile Include="IOrderBookUpdater.cs" />
     <Compile Include="ITicker.cs" />
     <Compile Include="MarketTick.cs" />

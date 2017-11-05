@@ -7,15 +7,15 @@ namespace com.defrobo.salamander
     public class ExecutionAlerter : IExecutionAlerter
     {
         public event EventHandler<ExecutionEventArgs> Created;
+
+        private const string channel = "lightning_executions_BTC_JPY";
         private Pubnub pub;
-        private readonly string channel;
         private SubscribeOperation<string> sub;
         private UnsubscribeOperation<string> unsub;
 
 
-        public ExecutionAlerter(string pubNubSubscribeKey = "sub-c-52a9ab50-291b-11e5-baaa-0619f8945a4f", string channel = "lightning_executions_BTC_JPY")
+        public ExecutionAlerter(string pubNubSubscribeKey = "sub-c-52a9ab50-291b-11e5-baaa-0619f8945a4f")
         {
-            this.channel = channel;
             pub = new Pubnub(new PNConfiguration() { SubscribeKey = pubNubSubscribeKey });
 
             pub.AddListener(new SubscribeCallbackExt(
