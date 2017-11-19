@@ -12,8 +12,8 @@ namespace com.defrobo.salamander
         private const string snapshotChannel = "lightning_board_snapshot_BTC_JPY";
         private const string updateChannel = "lightning_board_BTC_JPY";
         private Pubnub pub;
-        private SubscribeOperation<string> sub;
-        private UnsubscribeOperation<string> unsub;
+        private SubscribeOperation<object> sub;
+        private UnsubscribeOperation<object> unsub;
 
 
         public OrderBookUpdater(string pubNubSubscribeKey = "sub-c-52a9ab50-291b-11e5-baaa-0619f8945a4f")
@@ -53,8 +53,8 @@ namespace com.defrobo.salamander
                     }
                 }
             ));
-            sub = pub.Subscribe<string>().Channels(new string[] { snapshotChannel, updateChannel });
-            unsub = pub.Unsubscribe<string>().Channels(new string[] { snapshotChannel, updateChannel });
+            sub = pub.Subscribe<object>().Channels(new string[] { snapshotChannel, updateChannel });
+            unsub = pub.Unsubscribe<object>().Channels(new string[] { snapshotChannel, updateChannel });
         }
 
         public void Start()

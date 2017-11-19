@@ -10,8 +10,8 @@ namespace com.defrobo.salamander
 
         private const string channel = "lightning_executions_BTC_JPY";
         private Pubnub pub;
-        private SubscribeOperation<string> sub;
-        private UnsubscribeOperation<string> unsub;
+        private SubscribeOperation<object> sub;
+        private UnsubscribeOperation<object> unsub;
 
 
         public ExecutionAlerter(string pubNubSubscribeKey = "sub-c-52a9ab50-291b-11e5-baaa-0619f8945a4f")
@@ -44,8 +44,8 @@ namespace com.defrobo.salamander
                     }
                 }
             ));
-            sub = pub.Subscribe<string>().Channels(new string[] { channel });
-            unsub = pub.Unsubscribe<string>().Channels(new string[] { channel });
+            sub = pub.Subscribe<object>().Channels(new string[] { channel });
+            unsub = pub.Unsubscribe<object>().Channels(new string[] { channel });
         }
 
         public void Start()
