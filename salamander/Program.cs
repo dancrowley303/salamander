@@ -23,10 +23,10 @@ namespace com.defrobo.salamander
             var orderBookUpdater = new OrderBookUpdater();
             orderBook = new OrderBook(orderBookUpdater);
             //var logger = new ScreenMarketTicketLogger(ticker);
-            ticker.Updated += Ticker_Updated;
-            executionAlerter.Created += ExecutionAlerter_Created;
-            orderBookUpdater.Snapshot += OrderBookUpdater_Refresh;
-            orderBookUpdater.Updated += OrderBookUpdater_Refresh;
+            ticker.TickerUpdated += Ticker_Updated;
+            executionAlerter.ExecutionCreated += ExecutionAlerter_Created;
+            orderBookUpdater.OrderBookSnapshot += OrderBookUpdater_Refresh;
+            orderBookUpdater.OrderBookUpdated += OrderBookUpdater_Refresh;
             //logger.Start();
             ticker.Start();
             executionAlerter.Start();
@@ -41,7 +41,7 @@ namespace com.defrobo.salamander
             string resp2 = Console.ReadLine();
         }
 
-        private static void OrderBookUpdater_Refresh(object sender, OrderBookUpdateEventArgs e)
+        private static void OrderBookUpdater_Refresh(object sender, EventArgs e)
         {
             Console.Clear();
             if (orderBook.Bids.Count == 0 || orderBook.Asks.Count == 0)

@@ -33,8 +33,8 @@ namespace com.defrobo.salamander
         public OrderBook(OrderBookUpdater orderBookUpdater)
         {
             this.orderBookUpdater = orderBookUpdater;
-            this.orderBookUpdater.Snapshot += OrderBookUpdater_Snapshot;
-            this.orderBookUpdater.Updated += OrderBookUpdater_Updated;
+            this.orderBookUpdater.OrderBookSnapshot += OrderBookUpdater_Snapshot;
+            this.orderBookUpdater.OrderBookUpdated += OrderBookUpdater_Updated;
             bids = new SortedList<decimal, Order>();
             asks = new SortedList<decimal, Order>();
         }
@@ -44,9 +44,9 @@ namespace com.defrobo.salamander
             Update(e.OrderBookUpdate);
         }
 
-        private void OrderBookUpdater_Snapshot(object sender, OrderBookUpdateEventArgs e)
+        private void OrderBookUpdater_Snapshot(object sender, OrderBookSnapshotEventArgs e)
         {
-            Update(e.OrderBookUpdate);
+            Update(e.OrderBookSnapshot);
         }
 
         private void Update(OrderBookUpdate update)

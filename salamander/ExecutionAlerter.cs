@@ -6,7 +6,7 @@ namespace com.defrobo.salamander
 {
     public class ExecutionAlerter : IExecutionAlerter
     {
-        public event EventHandler<ExecutionEventArgs> Created;
+        public event EventHandler<ExecutionEventArgs> ExecutionCreated;
 
         private const string channel = "lightning_executions_BTC_JPY";
         private Pubnub pub;
@@ -60,7 +60,7 @@ namespace com.defrobo.salamander
 
         protected virtual void OnCreated(ExecutionEventArgs e)
         {
-            Created?.Invoke(this, e);
+            ExecutionCreated?.Invoke(this, e);
         }
     }
 }

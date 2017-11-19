@@ -25,17 +25,17 @@ namespace com.defrobo.salamander.gui
             var balancesResult = infoService.GetBalances();
 
             executionAlerter = new ExecutionAlerter();
-            executionAlerter.Created += ExecutionAlerter_Created;
+            executionAlerter.ExecutionCreated += ExecutionAlerter_Created;
             executionAlerter.Start();
 
             ticker = new Ticker();
-            ticker.Updated += Ticker_Updated;
+            ticker.TickerUpdated += Ticker_Updated;
             ticker.Start();
 
             orderBookUpdater = new OrderBookUpdater();
             orderBook = new OrderBook(orderBookUpdater);
-            orderBookUpdater.Snapshot += OrderBookUpdater_Update;
-            orderBookUpdater.Updated += OrderBookUpdater_Update;
+            orderBookUpdater.OrderBookSnapshot += OrderBookUpdater_Snapshot;
+            orderBookUpdater.OrderBookUpdated += OrderBookUpdater_Update;
             orderBookUpdater.Start();
 
             balances = await balancesResult;
@@ -43,6 +43,26 @@ namespace com.defrobo.salamander.gui
         }
 
         private void OrderBookUpdater_Update(object sender, OrderBookUpdateEventArgs e)
+        {
+            BeginInvoke(new Action(() =>
+            {
+                lstOrderBookBids.Items.Clear();
+                lstOrderBookAsks.Items.Clear();
+
+                foreach (var order in orderBook.Bids.Take(10))
+                {
+                    lstOrderBookBids.Items.Add(String.Format("{0} {1}", order.Price, order.Size));
+                }
+
+                foreach (var order in orderBook.Asks.Take(10))
+                {
+                    lstOrderBookAsks.Items.Add(String.Format("{0} {1}", order.Price, order.Size));
+                }
+
+            }));
+        }
+
+        private void OrderBookUpdater_Snapshot(object sender, OrderBookSnapshotEventArgs e)
         {
             BeginInvoke(new Action(() =>
             {

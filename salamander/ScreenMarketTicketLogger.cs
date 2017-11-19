@@ -13,12 +13,12 @@ namespace com.defrobo.salamander
 
         public void Start()
         {
-            ticker.Updated += Ticker_Updated;
+            ticker.TickerUpdated += Ticker_Updated;
         }
 
         public void Stop()
         {
-            ticker.Updated -= Ticker_Updated;
+            ticker.TickerUpdated -= Ticker_Updated;
         }
 
         private void Ticker_Updated(object sender, MarketTickEventArgs e)

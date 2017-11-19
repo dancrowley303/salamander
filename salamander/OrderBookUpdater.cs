@@ -6,8 +6,8 @@ namespace com.defrobo.salamander
 {
     public class OrderBookUpdater : IOrderBookUpdater
     {
-        public event EventHandler<OrderBookUpdateEventArgs> Snapshot;
-        public event EventHandler<OrderBookUpdateEventArgs> Updated;
+        public event EventHandler<OrderBookSnapshotEventArgs> OrderBookSnapshot;
+        public event EventHandler<OrderBookUpdateEventArgs> OrderBookUpdated;
 
         private const string snapshotChannel = "lightning_board_snapshot_BTC_JPY";
         private const string updateChannel = "lightning_board_BTC_JPY";
@@ -31,7 +31,7 @@ namespace com.defrobo.salamander
                         }
                         if (message.Channel.Equals(snapshotChannel))
                         {
-                            OnSnapshot(new OrderBookUpdateEventArgs(message.Message.ToString()));
+                            OnSnapshot(new OrderBookSnapshotEventArgs(message.Message.ToString()));
                         }
                     }
                 },
@@ -67,14 +67,14 @@ namespace com.defrobo.salamander
             unsub.Execute();
         }
 
-        protected virtual void OnSnapshot(OrderBookUpdateEventArgs e)
+        protected virtual void OnSnapshot(OrderBookSnapshotEventArgs e)
         {
-            Snapshot?.Invoke(this, e);
+            OrderBookSnapshot?.Invoke(this, e);
         }
 
         protected virtual void OnUpdated(OrderBookUpdateEventArgs e)
         {
-            Updated?.Invoke(this, e);
+            OrderBookUpdated?.Invoke(this, e);
         }
     }
 }

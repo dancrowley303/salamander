@@ -4,6 +4,6 @@ namespace com.defrobo.salamander
 {
     public interface ITicker
     {
-        event EventHandler<MarketTickEventArgs> Updated;
+        event EventHandler<MarketTickEventArgs> TickerUpdated;
     }
 }

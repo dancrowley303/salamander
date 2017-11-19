@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BackTestReplayer.cs" />
     <Compile Include="Balance.cs" />
     <Compile Include="Currency.cs" />
     <Compile Include="Execution.cs" />
@@ -71,8 +72,9 @@
     <Compile Include="MarketTick.cs" />
     <Compile Include="MarketTickEventArgs.cs" />
     <Compile Include="OrderBook.cs" />
-    <Compile Include="OrderBookUpdate.cs" />
     <Compile Include="OrderBookSnapshotEventArgs.cs" />
+    <Compile Include="OrderBookUpdate.cs" />
+    <Compile Include="OrderBookEventArgs.cs" />
     <Compile Include="OrderBookUpdater.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

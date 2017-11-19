@@ -6,7 +6,7 @@ namespace com.defrobo.salamander
 {
     public class Ticker : ITicker
     {
-        public event EventHandler<MarketTickEventArgs> Updated;
+        public event EventHandler<MarketTickEventArgs> TickerUpdated;
 
         private const string channel = "lightning_ticker_BTC_JPY";
         private Pubnub pub;
@@ -44,7 +44,7 @@ namespace com.defrobo.salamander
 
         protected virtual void OnUpdated(MarketTickEventArgs e)
         {
-            Updated?.Invoke(this, e);
+            TickerUpdated?.Invoke(this, e);
         }
     }
 }
