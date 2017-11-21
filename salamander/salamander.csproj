@@ -38,6 +38,9 @@
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="protobuf-net, Version=2.3.2.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>..\packages\protobuf-net.2.3.2\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
     <Reference Include="Pubnub, Version=4.0.8.0, Culture=neutral, PublicKeyToken=dc66f52ce6619f44, processorArchitecture=MSIL">
       <HintPath>..\packages\Pubnub.4.0.8\lib\net461\Pubnub.dll</HintPath>
     </Reference>
@@ -58,7 +61,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BackTestReplayer.cs" />
     <Compile Include="Balance.cs" />
     <Compile Include="Currency.cs" />
     <Compile Include="Execution.cs" />

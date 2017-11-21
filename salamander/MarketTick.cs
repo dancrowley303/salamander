@@ -1,58 +1,54 @@
 ﻿using Newtonsoft.Json;
+using ProtoBuf;
 using System;
 
 namespace com.defrobo.salamander
 {
-    public class MarketTick
+    [ProtoContract]
+    public struct MarketTick
     {
+        [ProtoMember(1)]
         [JsonProperty(PropertyName = "product_code")]
-        public string ProductCode { get; }
+        public string ProductCode { get; set; }
 
+        [ProtoMember(2)]
         [JsonProperty(PropertyName = "timestamp")]
-        public DateTime TimeStamp { get; }
+        public DateTime TimeStamp { get; set; }
 
+        [ProtoMember(3)]
         [JsonProperty(PropertyName = "best_bid")]
-        public decimal BestBid { get; }
+        public decimal BestBid { get; set; }
 
+        [ProtoMember(4)]
         [JsonProperty(PropertyName = "best_ask")]
-        public decimal BestAsk { get; }
+        public decimal BestAsk { get; set; }
 
+        [ProtoMember(5)]
         [JsonProperty(PropertyName = "best_bid_size")]
-        public decimal BestBidSize { get; }
+        public decimal BestBidSize { get; set; }
 
+        [ProtoMember(6)]
         [JsonProperty(PropertyName = "best_ask_size")]
-        public decimal BestAskSize { get; }
+        public decimal BestAskSize { get; set; }
 
+        [ProtoMember(7)]
         [JsonProperty(PropertyName = "total_bid_depth")]
-        public decimal TotalBidDepth { get; }
+        public decimal TotalBidDepth { get; set; }
 
+        [ProtoMember(8)]
         [JsonProperty(PropertyName = "total_ask_depth")]
-        public decimal TotalAskDepth { get; }
+        public decimal TotalAskDepth { get; set; }
 
+        [ProtoMember(9)]
         [JsonProperty(PropertyName = "ltp")]
-        public decimal LastTradedPrice { get; }
+        public decimal LastTradedPrice { get; set; }
 
+        [ProtoMember(10)]
         [JsonProperty(PropertyName = "volume")]
-        public decimal Volume { get; }
+        public decimal Volume { get; set; }
 
+        [ProtoMember(11)]
         [JsonProperty(PropertyName = "volume_by_product")]
-        public decimal VolumeByProduct { get; }
-    
-        public MarketTick(string productCode, DateTime timeStamp, int tickId, decimal bestBid, decimal bestAsk,
-        decimal bestBidSize, decimal bestAskSize, decimal totalBidDepth, decimal totalAskDepth,
-        decimal lastTradedPrice, decimal volume, decimal volumeByProduct)
-        {
-            this.ProductCode = productCode;
-            this.TimeStamp = timeStamp;
-            this.BestBid = bestBid;
-            this.BestAsk = bestAsk;
-            this.BestBidSize = bestBidSize;
-            this.BestAskSize = bestAskSize;
-            this.TotalBidDepth = totalBidDepth;
-            this.TotalAskDepth = totalAskDepth;
-            this.LastTradedPrice = lastTradedPrice;
-            this.Volume = volume;
-            this.VolumeByProduct = volumeByProduct;
-        }
+        public decimal VolumeByProduct { get; set; }
     }
 }
