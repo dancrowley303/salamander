@@ -1,17 +1,28 @@
 ﻿using Newtonsoft.Json;
+using ProtoBuf;
 using System;
 
 namespace com.defrobo.salamander
 {
+    [ProtoContract]
     public class OrderBookUpdateEventArgs : EventArgs
     {
-        public string RawOrderBookUpdateMessage { get; }
-        public OrderBookUpdate OrderBookUpdate { get; }
+        [ProtoMember(1)]
+        public OrderBookUpdate OrderBookUpdate { get; set; }
 
         public OrderBookUpdateEventArgs(string rawOrderBookUpdateMessage)
         {
-            this.RawOrderBookUpdateMessage = rawOrderBookUpdateMessage;
             this.OrderBookUpdate = JsonConvert.DeserializeObject<OrderBookUpdate>(rawOrderBookUpdateMessage);
+        }
+
+        public OrderBookUpdateEventArgs(OrderBookUpdate orderBookUpdate)
+        {
+            this.OrderBookUpdate = orderBookUpdate;
+        }
+
+        public OrderBookUpdateEventArgs()
+        {
+
         }
     }
 }

@@ -8,10 +8,10 @@ namespace salamander.backtester
 {
     public class BackTestRecorder
     {
-        private readonly Dictionary<long, List<Execution>> executions = new Dictionary<long, List<Execution>>();
-        private readonly Dictionary<long, List<OrderBookUpdate>> orderBookUpdates = new Dictionary<long, List<OrderBookUpdate>>();
-        private readonly Dictionary<long, List<OrderBookUpdate>> orderBookSnapshots = new Dictionary<long, List<OrderBookUpdate>>();
-        private readonly Dictionary<long, List<MarketTick>> marketTicks = new Dictionary<long, List<MarketTick>>();
+        private readonly Dictionary<long, List<ExecutionEventArgs>> executionEvents = new Dictionary<long, List<ExecutionEventArgs>>();
+        private readonly Dictionary<long, List<OrderBookUpdateEventArgs>> orderBookUpdateEvents = new Dictionary<long, List<OrderBookUpdateEventArgs>>();
+        private readonly Dictionary<long, List<OrderBookSnapshotEventArgs>> orderBookSnapshotEvents = new Dictionary<long, List<OrderBookSnapshotEventArgs>>();
+        private readonly Dictionary<long, List<MarketTickEventArgs>> marketTickEvents = new Dictionary<long, List<MarketTickEventArgs>>();
 
         private readonly ExecutionAlerter executionAlerter;
         private readonly OrderBookUpdater orderBookUpdater;
@@ -45,64 +45,66 @@ namespace salamander.backtester
             var elapsedTicks = GetElapsedTicks();
             Console.Write("mt ");
 
-            var marketTick = new MarketTick[] { e.Tick };
+            var marketTickEventArgs = new MarketTickEventArgs[] { e };
 
-            if (!marketTicks.ContainsKey(elapsedTicks))
+            if (!marketTickEvents.ContainsKey(elapsedTicks))
             {
-                marketTicks.Add(elapsedTicks, new List<MarketTick>(marketTick));
+                marketTickEvents.Add(elapsedTicks, new List<MarketTickEventArgs>(marketTickEventArgs));
             }
             else
             {
-                marketTicks[elapsedTicks].AddRange(marketTick);
+                marketTickEvents[elapsedTicks].AddRange(marketTickEventArgs);
             }
         }
 
         private void OrderBookUpdater_OrderBookSnapshot(object sender, OrderBookSnapshotEventArgs e)
         {
-            Console.Write("obs ");
             var elapsedTicks = GetElapsedTicks();
+            Console.Write("obs ");
 
-            var orderBookUpdate = new OrderBookUpdate[] { e.OrderBookSnapshot };
+            var orderBookSnapshotEventArgs = new OrderBookSnapshotEventArgs[] { e };
 
-            if (!orderBookSnapshots.ContainsKey(elapsedTicks))
+            if (!orderBookSnapshotEvents.ContainsKey(elapsedTicks))
             {
-                orderBookSnapshots.Add(elapsedTicks, new List<OrderBookUpdate>(orderBookUpdate));
+                orderBookSnapshotEvents.Add(elapsedTicks, new List<OrderBookSnapshotEventArgs>(orderBookSnapshotEventArgs));
             }
             else
             {
-                orderBookSnapshots[elapsedTicks].AddRange(orderBookUpdate);
+                orderBookSnapshotEvents[elapsedTicks].AddRange(orderBookSnapshotEventArgs);
             }
         }
 
         private void OrderBookUpdater_OrderBookUpdated(object sender, OrderBookUpdateEventArgs e)
         {
-            Console.Write("obu ");
             var elapsedTicks = GetElapsedTicks();
+            Console.Write("obu ");
 
-            var orderBookUpdate = new OrderBookUpdate[] { e.OrderBookUpdate };
+            var orderBookUpdateEventArgs = new OrderBookUpdateEventArgs[] { e };
 
-            if (!orderBookUpdates.ContainsKey(elapsedTicks))
+            if (!orderBookUpdateEvents.ContainsKey(elapsedTicks))
             {
-                orderBookUpdates.Add(elapsedTicks, new List<OrderBookUpdate>(orderBookUpdate));
+                orderBookUpdateEvents.Add(elapsedTicks, new List<OrderBookUpdateEventArgs>(orderBookUpdateEventArgs));
             }
             else
             {
-                orderBookUpdates[elapsedTicks].AddRange(orderBookUpdate);
+                orderBookUpdateEvents[elapsedTicks].AddRange(orderBookUpdateEventArgs);
             }
         }
 
         private void ExecutionAlerter_ExecutionCreated(object sender, ExecutionEventArgs e)
         {
-            Console.Write("ex ");
             var elapsedTicks = GetElapsedTicks();
+            Console.Write("ex ");
 
-            if (!executions.ContainsKey(elapsedTicks))
+            var executionEventArgs = new ExecutionEventArgs[] { e };
+
+            if (!executionEvents.ContainsKey(elapsedTicks))
             {
-                executions.Add(elapsedTicks, new List<Execution>(e.Executions));
+                executionEvents.Add(elapsedTicks, new List<ExecutionEventArgs>(executionEventArgs));
             }
             else
             {
-                executions[elapsedTicks].AddRange(e.Executions);
+                executionEvents[elapsedTicks].AddRange(executionEventArgs);
             }
         }
 
@@ -119,10 +121,10 @@ namespace salamander.backtester
 
             var backTestData = new BackTestData()
             {
-                Executions = executions,
-                OrderBookUpdates = orderBookUpdates,
-                OrderBookSnapshots = orderBookSnapshots,
-                MarketTicks = marketTicks
+                ExecutionEvents = executionEvents,
+                OrderBookUpdateEvents = orderBookUpdateEvents,
+                OrderBookSnapshotEvents = orderBookSnapshotEvents,
+                MarketTickEvents = marketTickEvents
             };
 
             using (var fileStream = new FileStream(filePath, FileMode.Create))

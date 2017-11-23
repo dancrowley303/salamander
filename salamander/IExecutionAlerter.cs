@@ -2,7 +2,7 @@
 
 namespace com.defrobo.salamander
 {
-    interface IExecutionAlerter
+    public interface IExecutionAlerter
     {
         event EventHandler<ExecutionEventArgs> ExecutionCreated;
     }

@@ -1,21 +1,28 @@
 ﻿using Newtonsoft.Json;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace com.defrobo.salamander
 {
+    [ProtoContract]
     public class ExecutionEventArgs : EventArgs
     {
-        public string RawExectionMessage { get; }
-        public Execution[] Executions { get; }
+        [ProtoMember(1)]
+        public Execution[] Executions { get; set;  }
 
         public ExecutionEventArgs(string rawExecutionMessage)
         {
-            this.RawExectionMessage = rawExecutionMessage;
             this.Executions = JsonConvert.DeserializeObject<List<Execution>>(rawExecutionMessage).ToArray();
+        }
+
+        public ExecutionEventArgs(Execution[] executions)
+        {
+            this.Executions = executions;
+        }
+
+        public ExecutionEventArgs()
+        {
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using ProtoBuf;
-using System.Collections.Generic;
 
 namespace com.defrobo.salamander
 {
@@ -8,22 +7,22 @@ namespace com.defrobo.salamander
     public struct Order
     {
         [ProtoMember(1)]
-        public decimal Price { get; }
+        public decimal Price;
         [ProtoMember(2)]
-        public decimal Size { get; }
+        public decimal Size;
     }
 
     [ProtoContract]
-    public class OrderBookUpdate
+    public struct OrderBookUpdate
     {
         [ProtoMember(1)]
         [JsonProperty(PropertyName = "mid_price")]
-        public decimal MidPrice { get; }
+        public decimal MidPrice;
 
         [ProtoMember(2)]
-        public List<Order> Bids { get; }
+        public Order[] Bids;
 
         [ProtoMember(3)]
-        public List<Order> Asks { get; }
+        public Order[] Asks;
     }
 }

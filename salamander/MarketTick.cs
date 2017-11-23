@@ -9,46 +9,46 @@ namespace com.defrobo.salamander
     {
         [ProtoMember(1)]
         [JsonProperty(PropertyName = "product_code")]
-        public string ProductCode { get; set; }
+        public string ProductCode;
 
         [ProtoMember(2)]
         [JsonProperty(PropertyName = "timestamp")]
-        public DateTime TimeStamp { get; set; }
+        public DateTime TimeStamp;
 
         [ProtoMember(3)]
         [JsonProperty(PropertyName = "best_bid")]
-        public decimal BestBid { get; set; }
+        public decimal BestBid;
 
         [ProtoMember(4)]
         [JsonProperty(PropertyName = "best_ask")]
-        public decimal BestAsk { get; set; }
+        public decimal BestAsk;
 
         [ProtoMember(5)]
         [JsonProperty(PropertyName = "best_bid_size")]
-        public decimal BestBidSize { get; set; }
+        public decimal BestBidSize;
 
         [ProtoMember(6)]
         [JsonProperty(PropertyName = "best_ask_size")]
-        public decimal BestAskSize { get; set; }
+        public decimal BestAskSize;
 
         [ProtoMember(7)]
         [JsonProperty(PropertyName = "total_bid_depth")]
-        public decimal TotalBidDepth { get; set; }
+        public decimal TotalBidDepth;
 
         [ProtoMember(8)]
         [JsonProperty(PropertyName = "total_ask_depth")]
-        public decimal TotalAskDepth { get; set; }
+        public decimal TotalAskDepth;
 
         [ProtoMember(9)]
         [JsonProperty(PropertyName = "ltp")]
-        public decimal LastTradedPrice { get; set; }
+        public decimal LastTradedPrice;
 
         [ProtoMember(10)]
         [JsonProperty(PropertyName = "volume")]
-        public decimal Volume { get; set; }
+        public decimal Volume;
 
         [ProtoMember(11)]
         [JsonProperty(PropertyName = "volume_by_product")]
-        public decimal VolumeByProduct { get; set; }
+        public decimal VolumeByProduct;
     }
 }

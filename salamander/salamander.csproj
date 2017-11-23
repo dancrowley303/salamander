@@ -76,11 +76,10 @@
     <Compile Include="OrderBook.cs" />
     <Compile Include="OrderBookSnapshotEventArgs.cs" />
     <Compile Include="OrderBookUpdate.cs" />
-    <Compile Include="OrderBookEventArgs.cs" />
+    <Compile Include="OrderBookUpdateEventArgs.cs" />
     <Compile Include="OrderBookUpdater.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScreenMarketTicketLogger.cs" />
     <Compile Include="Ticker.cs" />
   </ItemGroup>
   <ItemGroup>

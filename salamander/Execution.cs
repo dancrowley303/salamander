@@ -18,30 +18,30 @@ namespace com.defrobo.salamander
     {
         [ProtoMember(1)]
         [JsonProperty(PropertyName = "id")]
-        public int ID { get; set; }
+        public int ID;
 
         [ProtoMember(2)]
         [JsonProperty(PropertyName = "side")]
-        public Side Side { get; set; }
+        public Side Side;
 
         [ProtoMember(3)]
         [JsonProperty(PropertyName = "price")]
-        public decimal Price { get; set; }
+        public decimal Price;
 
         [ProtoMember(4)]
         [JsonProperty(PropertyName = "size")]
-        public decimal Size { get; set;}
+        public decimal Size;
 
         [ProtoMember(5)]
         [JsonProperty(PropertyName = "exec_date")]
-        public DateTime ExecutionDate { get; set; }
+        public DateTime ExecutionDate;
 
         [ProtoMember(6)]
         [JsonProperty(PropertyName = "buy_child_order_acceptance_id")]
-        public string BuyChildOrderAcceptanceId { get; set; }
+        public string BuyChildOrderAcceptanceId;
 
         [ProtoMember(7)]
         [JsonProperty(PropertyName = "sell_child_order_acceptance_id")]
-        public string SellChildOrderAcceptanceId { get; set; }
+        public string SellChildOrderAcceptanceId;
     }
 }
