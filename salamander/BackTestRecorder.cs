@@ -1,10 +1,9 @@
-﻿using com.defrobo.salamander;
-using ProtoBuf;
+﻿using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace salamander.backtester
+namespace com.defrobo.salamander
 {
     public class BackTestRecorder
     {
@@ -13,34 +12,27 @@ namespace salamander.backtester
         private readonly Dictionary<long, List<OrderBookSnapshotEventArgs>> orderBookSnapshotEvents = new Dictionary<long, List<OrderBookSnapshotEventArgs>>();
         private readonly Dictionary<long, List<MarketTickEventArgs>> marketTickEvents = new Dictionary<long, List<MarketTickEventArgs>>();
 
-        private readonly ExecutionAlerter executionAlerter;
-        private readonly OrderBookUpdater orderBookUpdater;
-        private readonly Ticker ticker;
+        private readonly Alerter alerter;
 
         private DateTime startTime;
 
-        public BackTestRecorder(ExecutionAlerter executionAlerter, OrderBookUpdater orderBookUpdater, Ticker ticker)
+        public BackTestRecorder(Alerter alerter)
         {
-            this.executionAlerter = executionAlerter;
-            this.orderBookUpdater = orderBookUpdater;
-            this.ticker = ticker;
+            this.alerter = alerter;
         }
 
         public void Record()
         {
             startTime = DateTime.Now;
             Console.WriteLine("Recording");
-            executionAlerter.ExecutionCreated += ExecutionAlerter_ExecutionCreated;
-            orderBookUpdater.OrderBookUpdated += OrderBookUpdater_OrderBookUpdated;
-            orderBookUpdater.OrderBookSnapshot += OrderBookUpdater_OrderBookSnapshot;
-            ticker.TickerUpdated += Ticker_TickerUpdated;
-            executionAlerter.Start();
-            orderBookUpdater.Start();
-            ticker.Start();
-
+            alerter.ExecutionCreated += Alerter_ExecutionCreated;
+            alerter.OrderBookUpdated += Alerter_OrderBookUpdated;
+            alerter.OrderBookSnapshot += Alerter_OrderBookSnapshot;
+            alerter.TickerUpdated += Alerter_TickerUpdated;
+            alerter.Start();
         }
 
-        private void Ticker_TickerUpdated(object sender, MarketTickEventArgs e)
+        private void Alerter_TickerUpdated(object sender, MarketTickEventArgs e)
         {
             var elapsedTicks = GetElapsedTicks();
             Console.Write("mt ");
@@ -57,7 +49,7 @@ namespace salamander.backtester
             }
         }
 
-        private void OrderBookUpdater_OrderBookSnapshot(object sender, OrderBookSnapshotEventArgs e)
+        private void Alerter_OrderBookSnapshot(object sender, OrderBookSnapshotEventArgs e)
         {
             var elapsedTicks = GetElapsedTicks();
             Console.Write("obs ");
@@ -74,7 +66,7 @@ namespace salamander.backtester
             }
         }
 
-        private void OrderBookUpdater_OrderBookUpdated(object sender, OrderBookUpdateEventArgs e)
+        private void Alerter_OrderBookUpdated(object sender, OrderBookUpdateEventArgs e)
         {
             var elapsedTicks = GetElapsedTicks();
             Console.Write("obu ");
@@ -91,7 +83,7 @@ namespace salamander.backtester
             }
         }
 
-        private void ExecutionAlerter_ExecutionCreated(object sender, ExecutionEventArgs e)
+        private void Alerter_ExecutionCreated(object sender, ExecutionEventArgs e)
         {
             var elapsedTicks = GetElapsedTicks();
             Console.Write("ex ");
@@ -115,9 +107,7 @@ namespace salamander.backtester
 
         public void Save(string filePath)
         {
-            executionAlerter.Stop();
-            orderBookUpdater.Stop();
-            ticker.Stop();
+            alerter.Stop();
 
             var backTestData = new BackTestData()
             {

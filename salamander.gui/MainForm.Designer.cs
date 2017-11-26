@@ -51,6 +51,8 @@
             this.label10 = new System.Windows.Forms.Label();
             this.lstOrderBookAsks = new System.Windows.Forms.ListBox();
             this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.lblDirection = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lblBalanceJPY
@@ -94,7 +96,7 @@
             this.lstExecutions.FormattingEnabled = true;
             this.lstExecutions.Location = new System.Drawing.Point(417, 22);
             this.lstExecutions.Name = "lstExecutions";
-            this.lstExecutions.Size = new System.Drawing.Size(264, 355);
+            this.lstExecutions.Size = new System.Drawing.Size(264, 316);
             this.lstExecutions.TabIndex = 4;
             // 
             // label1
@@ -252,11 +254,30 @@
             this.label11.TabIndex = 22;
             this.label11.Text = "Asks";
             // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(15, 356);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(52, 13);
+            this.label12.TabIndex = 23;
+            this.label12.Text = "Direction:";
+            // 
+            // lblDirection
+            // 
+            this.lblDirection.AutoSize = true;
+            this.lblDirection.Location = new System.Drawing.Point(74, 356);
+            this.lblDirection.Name = "lblDirection";
+            this.lblDirection.Size = new System.Drawing.Size(0, 13);
+            this.lblDirection.TabIndex = 24;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(693, 382);
+            this.ClientSize = new System.Drawing.Size(693, 580);
+            this.Controls.Add(this.lblDirection);
+            this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.lstOrderBookAsks);
             this.Controls.Add(this.label10);
@@ -314,6 +335,8 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ListBox lstOrderBookAsks;
         private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label lblDirection;
     }
 }
 

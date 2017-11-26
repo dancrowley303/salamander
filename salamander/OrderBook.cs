@@ -5,7 +5,7 @@ namespace com.defrobo.salamander
 {
     public class OrderBook
     {
-        private readonly IOrderBookUpdater orderBookUpdater;
+        private readonly IAlerter alerter;
         private readonly SortedList<decimal, Order> bids;
         private readonly SortedList<decimal, Order> asks;
 
@@ -30,21 +30,21 @@ namespace com.defrobo.salamander
 
         public decimal MidPrice { get; private set; }
 
-        public OrderBook(IOrderBookUpdater orderBookUpdater)
+        public OrderBook(IAlerter alerter)
         {
-            this.orderBookUpdater = orderBookUpdater;
-            this.orderBookUpdater.OrderBookSnapshot += OrderBookUpdater_Snapshot;
-            this.orderBookUpdater.OrderBookUpdated += OrderBookUpdater_Updated;
+            this.alerter = alerter;
+            this.alerter.OrderBookSnapshot += Alerter_OrderBookSnapshot;
+            this.alerter.OrderBookUpdated += Alerter_OrderBookUpdated;
             bids = new SortedList<decimal, Order>();
             asks = new SortedList<decimal, Order>();
         }
 
-        private void OrderBookUpdater_Updated(object sender, OrderBookUpdateEventArgs e)
+        private void Alerter_OrderBookUpdated(object sender, OrderBookUpdateEventArgs e)
         {
             Update(e.OrderBookUpdate);
         }
 
-        private void OrderBookUpdater_Snapshot(object sender, OrderBookSnapshotEventArgs e)
+        private void Alerter_OrderBookSnapshot(object sender, OrderBookSnapshotEventArgs e)
         {
             Update(e.OrderBookSnapshot);
         }

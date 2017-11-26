@@ -1,5 +1,4 @@
-﻿using salamander.backtester;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -9,12 +8,10 @@ namespace com.defrobo.salamander.gui
     public partial class MainForm : Form
     {
         private InfoService infoService;
-        private ExecutionAlerter executionAlerter;
-        private Ticker ticker;
         private Dictionary<Currency, Balance> balances;
         private OrderBook orderBook;
-        private OrderBookUpdater orderBookUpdater;
-        private BackTestReplayer backTestReplayer; 
+        private IAlerter alerter;
+        private Predictor predictor;
 
         public MainForm()
         {
@@ -23,29 +20,29 @@ namespace com.defrobo.salamander.gui
 
         private async void Startup()
         {
+            var backtest = true;
+
             infoService = new InfoService();
             var balancesResult = infoService.GetBalances();
 
-            backTestReplayer = new BackTestReplayer(".\\..\\..\\..\\salamander.backtestrecorder\\bin\\debug\\recording.bts");
-            backTestReplayer.ExecutionCreated += ExecutionAlerter_Created;
-            backTestReplayer.OrderBookSnapshot += OrderBookUpdater_Snapshot;
-            backTestReplayer.OrderBookUpdated += OrderBookUpdater_Update;
-            backTestReplayer.TickerUpdated += Ticker_Updated;
-            backTestReplayer.Replay();
+            if (backtest)
+            {
+                alerter = new BackTestReplayer(".\\..\\..\\..\\salamander.backtestrecorder\\bin\\debug\\recording0.bts");
+            }
+            else
+            {
+                alerter = new Alerter();
+            }
 
-            //executionAlerter = new ExecutionAlerter();
-            //executionAlerter.ExecutionCreated += ExecutionAlerter_Created;
-            //executionAlerter.Start();
+            alerter.ExecutionCreated += ExecutionAlerter_Created;
+            alerter.OrderBookSnapshot += OrderBookUpdater_Snapshot;
+            alerter.OrderBookUpdated += OrderBookUpdater_Update;
+            alerter.TickerUpdated += Ticker_Updated;
+            orderBook = new OrderBook(alerter);
+            predictor = new Predictor(alerter);
 
-            //ticker = new Ticker();
-            //ticker.TickerUpdated += Ticker_Updated;
-            //ticker.Start();
+            alerter.Start();
 
-            //orderBookUpdater = new OrderBookUpdater();
-            orderBook = new OrderBook(backTestReplayer);
-            //orderBookUpdater.OrderBookSnapshot += OrderBookUpdater_Snapshot;
-            //orderBookUpdater.OrderBookUpdated += OrderBookUpdater_Update;
-            //orderBookUpdater.Start();
 
             balances = await balancesResult;
             RefreshBalances(balances);
@@ -58,12 +55,12 @@ namespace com.defrobo.salamander.gui
                 lstOrderBookBids.Items.Clear();
                 lstOrderBookAsks.Items.Clear();
 
-                foreach (var order in orderBook.Bids.Take(10))
+                foreach (var order in orderBook.Bids.Take(orderBook.Bids.Count >= 10 ? 10 : orderBook.Bids.Count))
                 {
                     lstOrderBookBids.Items.Add(String.Format("{0} {1}", order.Price, order.Size));
                 }
 
-                foreach (var order in orderBook.Asks.Take(10))
+                foreach (var order in orderBook.Asks.Take(orderBook.Asks.Count >= 10 ? 10 : orderBook.Asks.Count))
                 {
                     lstOrderBookAsks.Items.Add(String.Format("{0} {1}", order.Price, order.Size));
                 }
@@ -100,6 +97,8 @@ namespace com.defrobo.salamander.gui
                 lblLastTradedPrice.Text = e.Tick.LastTradedPrice.ToString();
                 lblBestAsk.Text = e.Tick.BestAsk.ToString();
                 lblBestAskSize.Text = e.Tick.BestAskSize.ToString();
+
+                lblDirection.Text = predictor.PriceDirection.ToString();
             }));
         }
 
@@ -136,9 +135,7 @@ namespace com.defrobo.salamander.gui
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             infoService.Close();
-            //executionAlerter.Stop();
-            //ticker.Stop();
-            //orderBookUpdater.Stop();
+            alerter.Stop();
         }
     }
 }

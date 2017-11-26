@@ -61,26 +61,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BackTestData.cs" />
+    <Compile Include="BackTestRecorder.cs" />
+    <Compile Include="BackTestReplayer.cs" />
     <Compile Include="Balance.cs" />
     <Compile Include="Currency.cs" />
     <Compile Include="Execution.cs" />
-    <Compile Include="ExecutionAlerter.cs" />
+    <Compile Include="Alerter.cs" />
     <Compile Include="ExecutionEventArgs.cs" />
-    <Compile Include="IExecutionAlerter.cs" />
-    <Compile Include="IMarketTickLogger.cs" />
+    <Compile Include="IAlerter.cs" />
     <Compile Include="InfoService.cs" />
-    <Compile Include="IOrderBookUpdater.cs" />
-    <Compile Include="ITicker.cs" />
     <Compile Include="MarketTick.cs" />
     <Compile Include="MarketTickEventArgs.cs" />
     <Compile Include="OrderBook.cs" />
     <Compile Include="OrderBookSnapshotEventArgs.cs" />
     <Compile Include="OrderBookUpdate.cs" />
     <Compile Include="OrderBookUpdateEventArgs.cs" />
-    <Compile Include="OrderBookUpdater.cs" />
+    <Compile Include="Predictor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Ticker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

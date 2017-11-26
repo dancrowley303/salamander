@@ -11,6 +11,8 @@ namespace com.defrobo.salamander
         private static decimal bestBid;
         private static Dictionary<Currency, Balance> balances;
 
+        private static BackTestReplayer replayer;
+
         private static OrderBook orderBook;
 
         static void Main(string[] args)
@@ -18,27 +20,20 @@ namespace com.defrobo.salamander
             var infoService = new InfoService();
             var balanceResult = infoService.GetBalances();
 
-            var ticker = new Ticker();
-            var executionAlerter = new ExecutionAlerter();
-            var orderBookUpdater = new OrderBookUpdater();
-            orderBook = new OrderBook(orderBookUpdater);
-            //var logger = new ScreenMarketTicketLogger(ticker);
-            ticker.TickerUpdated += Ticker_Updated;
-            executionAlerter.ExecutionCreated += ExecutionAlerter_Created;
-            orderBookUpdater.OrderBookSnapshot += OrderBookUpdater_Refresh;
-            orderBookUpdater.OrderBookUpdated += OrderBookUpdater_Refresh;
-            //logger.Start();
-            ticker.Start();
-            executionAlerter.Start();
-            orderBookUpdater.Start();
+            replayer = new BackTestReplayer(".\\..\\..\\..\\salamander.backtestrecorder\\bin\\debug\\recording0.bts");
+
+            orderBook = new OrderBook(replayer);
+            replayer.TickerUpdated += Ticker_Updated;
+            replayer.ExecutionCreated += ExecutionAlerter_Created;
+            replayer.OrderBookSnapshot += OrderBookUpdater_Refresh;
+            replayer.OrderBookUpdated += OrderBookUpdater_Refresh;
+
+            replayer.Start();
+
 
             balances = balanceResult.Result;
             string resp = Console.ReadLine();
-            //logger.Stop();
-            ticker.Stop();
-            executionAlerter.Stop();
-            orderBookUpdater.Stop();
-            string resp2 = Console.ReadLine();
+
         }
 
         private static void OrderBookUpdater_Refresh(object sender, EventArgs e)

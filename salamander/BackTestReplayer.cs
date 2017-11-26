@@ -1,13 +1,12 @@
-﻿using com.defrobo.salamander;
-using ProtoBuf;
+﻿using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
-namespace salamander.backtester
+namespace com.defrobo.salamander
 {
-    public class BackTestReplayer : IExecutionAlerter, IOrderBookUpdater, ITicker
+    public class BackTestReplayer : IAlerter
     {
         private class OrderBookSnapshotTimerState
         {
@@ -37,7 +36,7 @@ namespace salamander.backtester
             this.filePath = filePath;
         }
 
-        public void Replay()
+        public void Start()
         {
             using (var fileStream = new FileStream(filePath, FileMode.Open))
             {
@@ -89,6 +88,14 @@ namespace salamander.backtester
                     }
                 }
             }
+        }
+
+        public void Stop()
+        {
+            executionTimers.Clear();
+            orderBookSnapshotTimers.Clear();
+            orderBookUpdateTimers.Clear();
+            marketTickTimers.Clear();
         }
 
         private void ExecutionTimerCallback(object state)
