@@ -79,6 +79,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\salamander.backtestrecorder\salamander.backtester.csproj">
+      <Project>{197be92e-a3f8-4c95-b7ff-450596838a24}</Project>
+      <Name>salamander.backtester</Name>
+    </ProjectReference>
     <ProjectReference Include="..\salamander\salamander.csproj">
       <Project>{b7c58871-fa87-4dc2-a50f-15c151fab0ef}</Project>
       <Name>salamander</Name>

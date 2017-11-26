@@ -5,7 +5,7 @@ namespace com.defrobo.salamander
 {
     public class OrderBook
     {
-        private readonly OrderBookUpdater orderBookUpdater;
+        private readonly IOrderBookUpdater orderBookUpdater;
         private readonly SortedList<decimal, Order> bids;
         private readonly SortedList<decimal, Order> asks;
 
@@ -30,7 +30,7 @@ namespace com.defrobo.salamander
 
         public decimal MidPrice { get; private set; }
 
-        public OrderBook(OrderBookUpdater orderBookUpdater)
+        public OrderBook(IOrderBookUpdater orderBookUpdater)
         {
             this.orderBookUpdater = orderBookUpdater;
             this.orderBookUpdater.OrderBookSnapshot += OrderBookUpdater_Snapshot;
@@ -52,26 +52,33 @@ namespace com.defrobo.salamander
         private void Update(OrderBookUpdate update)
         {
             this.MidPrice = update.MidPrice;
-            foreach (var ask in update.Asks)
+            if (update.Asks != null)
             {
-                if (ask.Size == 0.0m)
+                foreach (var ask in update.Asks)
                 {
-                    asks.Remove(ask.Price);
-                }
-                else
-                {
-                    asks[ask.Price] = ask;
+                    if (ask.Size == 0.0m)
+                    {
+                        asks.Remove(ask.Price);
+                    }
+                    else
+                    {
+                        asks[ask.Price] = ask;
+                    }
                 }
             }
-            foreach (var bid in update.Bids)
+
+            if (update.Bids != null)
             {
-                if (bid.Size == 0.0m)
+                foreach (var bid in update.Bids)
                 {
-                    bids.Remove(bid.Price);
-                }
-                else
-                {
-                    bids[bid.Price] = bid;
+                    if (bid.Size == 0.0m)
+                    {
+                        bids.Remove(bid.Price);
+                    }
+                    else
+                    {
+                        bids[bid.Price] = bid;
+                    }
                 }
             }
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using salamander.backtester;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -13,6 +14,7 @@ namespace com.defrobo.salamander.gui
         private Dictionary<Currency, Balance> balances;
         private OrderBook orderBook;
         private OrderBookUpdater orderBookUpdater;
+        private BackTestReplayer backTestReplayer; 
 
         public MainForm()
         {
@@ -24,19 +26,26 @@ namespace com.defrobo.salamander.gui
             infoService = new InfoService();
             var balancesResult = infoService.GetBalances();
 
-            executionAlerter = new ExecutionAlerter();
-            executionAlerter.ExecutionCreated += ExecutionAlerter_Created;
-            executionAlerter.Start();
+            backTestReplayer = new BackTestReplayer(".\\..\\..\\..\\salamander.backtestrecorder\\bin\\debug\\recording.bts");
+            backTestReplayer.ExecutionCreated += ExecutionAlerter_Created;
+            backTestReplayer.OrderBookSnapshot += OrderBookUpdater_Snapshot;
+            backTestReplayer.OrderBookUpdated += OrderBookUpdater_Update;
+            backTestReplayer.TickerUpdated += Ticker_Updated;
+            backTestReplayer.Replay();
 
-            ticker = new Ticker();
-            ticker.TickerUpdated += Ticker_Updated;
-            ticker.Start();
+            //executionAlerter = new ExecutionAlerter();
+            //executionAlerter.ExecutionCreated += ExecutionAlerter_Created;
+            //executionAlerter.Start();
 
-            orderBookUpdater = new OrderBookUpdater();
-            orderBook = new OrderBook(orderBookUpdater);
-            orderBookUpdater.OrderBookSnapshot += OrderBookUpdater_Snapshot;
-            orderBookUpdater.OrderBookUpdated += OrderBookUpdater_Update;
-            orderBookUpdater.Start();
+            //ticker = new Ticker();
+            //ticker.TickerUpdated += Ticker_Updated;
+            //ticker.Start();
+
+            //orderBookUpdater = new OrderBookUpdater();
+            orderBook = new OrderBook(backTestReplayer);
+            //orderBookUpdater.OrderBookSnapshot += OrderBookUpdater_Snapshot;
+            //orderBookUpdater.OrderBookUpdated += OrderBookUpdater_Update;
+            //orderBookUpdater.Start();
 
             balances = await balancesResult;
             RefreshBalances(balances);
@@ -127,9 +136,9 @@ namespace com.defrobo.salamander.gui
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             infoService.Close();
-            executionAlerter.Stop();
-            ticker.Stop();
-            orderBookUpdater.Stop();
+            //executionAlerter.Stop();
+            //ticker.Stop();
+            //orderBookUpdater.Stop();
         }
     }
 }

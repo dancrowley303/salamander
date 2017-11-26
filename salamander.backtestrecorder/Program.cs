@@ -14,8 +14,8 @@ namespace salamander.backtester
 
         static void Main(string[] args)
         {
-            //Record();
-            Replay();
+            Record();
+            //Replay();
         }
 
         static void Replay()
