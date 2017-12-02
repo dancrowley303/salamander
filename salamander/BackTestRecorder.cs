@@ -12,11 +12,11 @@ namespace com.defrobo.salamander
         private readonly Dictionary<long, List<OrderBookSnapshotEventArgs>> orderBookSnapshotEvents = new Dictionary<long, List<OrderBookSnapshotEventArgs>>();
         private readonly Dictionary<long, List<MarketTickEventArgs>> marketTickEvents = new Dictionary<long, List<MarketTickEventArgs>>();
 
-        private readonly Alerter alerter;
+        private readonly IAlerter alerter;
 
         private DateTime startTime;
 
-        public BackTestRecorder(Alerter alerter)
+        public BackTestRecorder(IAlerter alerter)
         {
             this.alerter = alerter;
         }
@@ -24,7 +24,6 @@ namespace com.defrobo.salamander
         public void Record()
         {
             startTime = DateTime.Now;
-            Console.WriteLine("Recording");
             alerter.ExecutionCreated += Alerter_ExecutionCreated;
             alerter.OrderBookUpdated += Alerter_OrderBookUpdated;
             alerter.OrderBookSnapshot += Alerter_OrderBookSnapshot;
@@ -35,7 +34,6 @@ namespace com.defrobo.salamander
         private void Alerter_TickerUpdated(object sender, MarketTickEventArgs e)
         {
             var elapsedTicks = GetElapsedTicks();
-            Console.Write("mt ");
 
             var marketTickEventArgs = new MarketTickEventArgs[] { e };
 
@@ -52,7 +50,6 @@ namespace com.defrobo.salamander
         private void Alerter_OrderBookSnapshot(object sender, OrderBookSnapshotEventArgs e)
         {
             var elapsedTicks = GetElapsedTicks();
-            Console.Write("obs ");
 
             var orderBookSnapshotEventArgs = new OrderBookSnapshotEventArgs[] { e };
 
@@ -69,7 +66,6 @@ namespace com.defrobo.salamander
         private void Alerter_OrderBookUpdated(object sender, OrderBookUpdateEventArgs e)
         {
             var elapsedTicks = GetElapsedTicks();
-            Console.Write("obu ");
 
             var orderBookUpdateEventArgs = new OrderBookUpdateEventArgs[] { e };
 
@@ -86,7 +82,6 @@ namespace com.defrobo.salamander
         private void Alerter_ExecutionCreated(object sender, ExecutionEventArgs e)
         {
             var elapsedTicks = GetElapsedTicks();
-            Console.Write("ex ");
 
             var executionEventArgs = new ExecutionEventArgs[] { e };
 
@@ -107,20 +102,31 @@ namespace com.defrobo.salamander
 
         public void Save(string filePath)
         {
-            alerter.Stop();
-
             var backTestData = new BackTestData()
             {
-                ExecutionEvents = executionEvents,
-                OrderBookUpdateEvents = orderBookUpdateEvents,
-                OrderBookSnapshotEvents = orderBookSnapshotEvents,
-                MarketTickEvents = marketTickEvents
+                ExecutionEvents = new Dictionary<long, List<ExecutionEventArgs>>(executionEvents),
+                OrderBookUpdateEvents = new Dictionary<long, List<OrderBookUpdateEventArgs>>(orderBookUpdateEvents),
+                OrderBookSnapshotEvents = new Dictionary<long, List<OrderBookSnapshotEventArgs>>(orderBookSnapshotEvents),
+                MarketTickEvents = new Dictionary<long, List<MarketTickEventArgs>>(marketTickEvents)
             };
 
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
                 Serializer.Serialize<BackTestData>(fileStream, backTestData);
             }
+        }
+
+        public void Clear()
+        {
+            executionEvents.Clear();
+            orderBookUpdateEvents.Clear();
+            orderBookSnapshotEvents.Clear();
+            marketTickEvents.Clear();
+        }
+
+        public void Stop()
+        {
+            alerter.Stop();
         }
     }
 }

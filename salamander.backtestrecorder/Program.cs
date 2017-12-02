@@ -1,65 +1,63 @@
 ﻿using com.defrobo.salamander;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+using System.Threading;
 
-namespace salamander.backtester
+namespace salamander.backtestrecorder
 {
     class Program
     {
-        private static ExecutionAlerter executionAlerter = new ExecutionAlerter();
-        private static OrderBookUpdater orderBookUpdater = new OrderBookUpdater();
-        private static Ticker ticker = new Ticker();
+        private static IAlerter alerter = new Alerter();
+        private static BackTestRecorder backTestRecorder = new BackTestRecorder(alerter);
+        private static string filePath = ".\\salamander-{0}.btr";
+        private static Timer timer;
 
         static void Main(string[] args)
         {
-            Record();
-            //Replay();
-        }
-
-        static void Replay()
-        {
-            var backTestReplayer = new BackTestReplayer(".\\recording.bts");
-            backTestReplayer.Replay();
-            backTestReplayer.ExecutionCreated += BackTestReplayer_ExecutionCreated;
-            backTestReplayer.OrderBookSnapshot += BackTestReplayer_OrderBookSnapshot;
-            backTestReplayer.OrderBookUpdated += BackTestReplayer_OrderBookUpdated;
-            backTestReplayer.TickerUpdated += BackTestReplayer_TickerUpdated;
+            Console.WriteLine("Starting recorder, Hit enter to stop recording.");
+            Start();
             Console.ReadLine();
-
+            CaptureToOutput(true);
         }
 
-        private static void BackTestReplayer_TickerUpdated(object sender, MarketTickEventArgs e)
+        private static string DateSuffixGenerator(Boolean? lastWrite)
         {
-            Console.WriteLine("{0} {1} {2} {3}", e.Tick.TimeStamp, e.Tick.LastTradedPrice, e.Tick.ProductCode, e.Tick.Volume);
-        }
-
-        private static void BackTestReplayer_OrderBookUpdated(object sender, OrderBookUpdateEventArgs e)
-        {
-            Console.WriteLine("{0} {1} {2}", e.OrderBookUpdate.MidPrice, e.OrderBookUpdate.Asks?.Length, e.OrderBookUpdate.Bids?.Length);
-        }
-
-        private static void BackTestReplayer_OrderBookSnapshot(object sender, OrderBookSnapshotEventArgs e)
-        {
-            Console.WriteLine("{0}", e.OrderBookSnapshot.MidPrice);
-        }
-
-        private static void BackTestReplayer_ExecutionCreated(object sender, ExecutionEventArgs e)
-        {
-            foreach(var ex in e.Executions)
+            //return DateTime.Now.ToString("yyyy-MM-dd-HH");
+            if (lastWrite.HasValue && lastWrite.Value)
             {
-                Console.WriteLine("{0} {1} {2} {3}", ex.ID, ex.Price, ex.Size, ex.Side);
+                return DateTime.Now.ToString("yyyy-MM-dd-HH");
+            }
+            else
+            {
+                return DateTime.Now.AddHours(-1).ToString("yyyy-MM-dd-HH");
             }
         }
 
-        static void Record()
+        private static string MakeFilePath(Boolean? lastWrite)
         {
-            var backTestRecorder = new BackTestRecorder(executionAlerter, orderBookUpdater, ticker);
+            return string.Format(filePath, DateSuffixGenerator(lastWrite));
+        }
+
+        private static void Start()
+        {
+            DateTime now = DateTime.Now;
+
+            timer = new Timer(CaptureToOutput, filePath, TimeSpan.FromSeconds(3600 - (now.Minute * 60 + now.Second)), TimeSpan.FromHours(1));
             backTestRecorder.Record();
-            Console.ReadLine();
-            Console.WriteLine("Saving data");
-            backTestRecorder.Save(".\\recording.bts");
+        }
+
+        private static void Stop()
+        {
+            backTestRecorder.Stop();
+            backTestRecorder.Clear();
+        }
+
+        private static void CaptureToOutput(object state)
+        {
+            var lastWrite = state as Boolean?;
+            var fullFilePath = MakeFilePath(lastWrite);
+            Console.WriteLine("Writing to {0}", fullFilePath);
+            backTestRecorder.Save(fullFilePath);
+            backTestRecorder.Clear();
         }
     }
 }

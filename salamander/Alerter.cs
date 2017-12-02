@@ -29,33 +29,10 @@ namespace com.defrobo.salamander
                 {
                     if (message != null)
                     {
-                        OnExecutionCreated(new ExecutionEventArgs(message.Message.ToString()));
-                    }
-                },
-                (pubnubObj, presence) =>
-                {
-                    if (presence != null)
-                    {
-                        Console.WriteLine(presence.ToString());
-                    }
-                },
-                (pubnubObj, status) =>
-                {
-                    if (status != null)
-                    {
-                        if (status.Error)
-                            throw new Exception(status.ErrorData.Information);
-
-                        Console.WriteLine("STATUS: " + status.Operation);
-                    }
-                }
-            ));
-
-            pub.AddListener(new SubscribeCallbackExt(
-                (pubnubObj, message) =>
-                {
-                    if (message != null)
-                    {
+                        if (message.Channel.Equals(executionsChannel))
+                        {
+                            OnExecutionCreated(new ExecutionEventArgs(message.Message.ToString()));
+                        }
                         if (message.Channel.Equals(updateChannel))
                         {
                             OnOrderBookUpdated(new OrderBookUpdateEventArgs(message.Message.ToString()));
@@ -64,6 +41,10 @@ namespace com.defrobo.salamander
                         {
                             OnOrderBookSnapshot(new OrderBookSnapshotEventArgs(message.Message.ToString()));
                         }
+                        if (message.Channel.Equals(tickerChannel))
+                        {
+                            OnTickerUpdated(new MarketTickEventArgs(message.Message.ToString()));
+                        }
                     }
                 },
                 (pubnubObj, presence) =>
@@ -84,19 +65,6 @@ namespace com.defrobo.salamander
                     }
                 }
             ));
-
-            pub.AddListener(new SubscribeCallbackExt(
-                (pubnubObj, message) =>
-                {
-                    if (message != null)
-                    {
-                        OnTickerUpdated(new MarketTickEventArgs(message.Message.ToString()));
-                    }
-                },
-                (pubnubObj, presence) => { },
-                (pubnubObj, status) => { }
-            ));
-
 
             sub = pub.Subscribe<object>().Channels(new string[] { executionsChannel, snapshotChannel, updateChannel, tickerChannel });
             unsub = pub.Unsubscribe<object>().Channels(new string[] { executionsChannel, snapshotChannel, updateChannel, tickerChannel });
