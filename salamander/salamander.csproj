@@ -61,16 +61,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BackTestCommandService.cs" />
     <Compile Include="BackTestData.cs" />
     <Compile Include="BackTestRecorder.cs" />
     <Compile Include="BackTestReplayer.cs" />
     <Compile Include="Balance.cs" />
+    <Compile Include="CommandName.cs" />
     <Compile Include="Currency.cs" />
     <Compile Include="Execution.cs" />
     <Compile Include="Alerter.cs" />
     <Compile Include="ExecutionEventArgs.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="IAlerter.cs" />
-    <Compile Include="InfoService.cs" />
+    <Compile Include="ICommandService.cs" />
+    <Compile Include="CommandService.cs" />
     <Compile Include="MarketTick.cs" />
     <Compile Include="MarketTickEventArgs.cs" />
     <Compile Include="OrderBook.cs" />
@@ -80,6 +84,7 @@
     <Compile Include="Predictor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CommandStatsRecorder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

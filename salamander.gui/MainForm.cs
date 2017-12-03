@@ -7,7 +7,7 @@ namespace com.defrobo.salamander.gui
 {
     public partial class MainForm : Form
     {
-        private InfoService infoService;
+        private CommandService infoService;
         private Dictionary<Currency, Balance> balances;
         private OrderBook orderBook;
         private IAlerter alerter;
@@ -22,7 +22,7 @@ namespace com.defrobo.salamander.gui
         {
             var backtest = true;
 
-            infoService = new InfoService();
+            infoService = new CommandService();
             var balancesResult = infoService.GetBalances();
 
             if (backtest)

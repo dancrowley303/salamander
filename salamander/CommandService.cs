@@ -8,19 +8,23 @@ using System.Threading.Tasks;
 
 namespace com.defrobo.salamander
 {
-    public class InfoService
+    public class CommandService : ICommandService
     {
         private readonly string apiKey;
         private readonly string apiSecret;
         private readonly HttpClient httpClient;
         private readonly Uri endpointUri = new Uri("https://api.bitflyer.jp");
 
-        public InfoService()
+        private readonly CommandStatsRecorder commandStatsRecorder = new CommandStatsRecorder();
+
+        public CommandService()
         {
             apiKey = Environment.GetEnvironmentVariable("BITFLYER_API_KEY");
             apiSecret = Environment.GetEnvironmentVariable("BITFLYER_API_SECRET");
-            httpClient = new HttpClient();
-            httpClient.BaseAddress = endpointUri;
+            httpClient = new HttpClient
+            {
+                BaseAddress = endpointUri
+            };
         }
 
         public void Close()
@@ -29,8 +33,30 @@ namespace com.defrobo.salamander
                 httpClient.Dispose();
         }
 
+        public double? GetAverageTime(CommandName commandName)
+        {
+            return commandStatsRecorder.GetAverageTime(commandName);
+        }
+
+        public double? GetStdDevTime(CommandName commandName)
+        {
+            return commandStatsRecorder.GetStdDev(commandName);
+        }
+
+        public double? GetMinTime(CommandName commandName)
+        {
+            return commandStatsRecorder.GetMinTime(commandName);
+        }
+
+        public double? GetMaxTime(CommandName commandName)
+        {
+            return commandStatsRecorder.GetMinTime(commandName);
+        }
+
         public async Task<Dictionary<Currency, Balance>> GetBalances()
-        { 
+        {
+            commandStatsRecorder.StartRecording(CommandName.GetBalances);
+
             var method = "GET";
             var path = "/v1/me/getbalance";
             var query = "";
@@ -45,6 +71,8 @@ namespace com.defrobo.salamander
             {
                 balances.Add(rawBalance.Currency, rawBalance);
             }
+
+            commandStatsRecorder.StopRecording(CommandName.GetBalances);
 
             return balances;
         }

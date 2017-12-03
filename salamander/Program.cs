@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace com.defrobo.salamander
 {
@@ -17,8 +18,32 @@ namespace com.defrobo.salamander
 
         static void Main(string[] args)
         {
-            var infoService = new InfoService();
-            var balanceResult = infoService.GetBalances();
+            //Replay();
+            TestPerf();
+        }
+
+        private static void TestPerf()
+        {
+            ICommandService cmd = new CommandService();
+            ICommandService btCmd = new BackTestCommandService();
+            for (var i = 0; i < 4000; i++)
+            {
+                //Thread.Sleep(5);
+                //var cmdRes = cmd.GetBalances();
+                var cmdBtRes = btCmd.GetBalances();
+                //var x = cmdRes.Result;
+                var y = cmdBtRes.Result;
+                //Console.WriteLine("AVG " + cmd.GetAverageTime(CommandName.GetBalances) + " / STD DEV " + cmd.GetStdDev(CommandName.GetBalances));
+                Console.WriteLine("BTAVG " + btCmd.GetAverageTime(CommandName.GetBalances) + " / BT STD DEV " + btCmd.GetStdDevTime(CommandName.GetBalances));
+            }
+            Console.WriteLine("finished");
+
+        }
+
+        private static void Replay()
+        {
+            var commandService = new CommandService();
+            var balanceResult = commandService.GetBalances();
 
             replayer = new BackTestReplayer(".\\..\\..\\..\\salamander.backtestrecorder\\bin\\debug\\recording0.bts");
 
@@ -33,8 +58,8 @@ namespace com.defrobo.salamander
 
             balances = balanceResult.Result;
             string resp = Console.ReadLine();
-
         }
+
 
         private static void OrderBookUpdater_Refresh(object sender, EventArgs e)
         {
@@ -46,7 +71,7 @@ namespace com.defrobo.salamander
 
             var bestBidOrder = orderBook.Bids.First();
             var bestAskOrder = orderBook.Asks.First();
-            Console.WriteLine("best ask:     " + bestAskOrder.Price + " - " + bestAskOrder.Size  + "BTC");
+            Console.WriteLine("best ask:     " + bestAskOrder.Price + " - " + bestAskOrder.Size + "BTC");
             Console.Write("OBOOK mprice: " + orderBook.MidPrice + " ");
             Console.Write("TICK LTP " + lastTradedPrice + " ask: " + bestAsk + " bid: " + bestBid + " ");
             if (lastTradedPrice == bestBid) Console.WriteLine(" BID");
