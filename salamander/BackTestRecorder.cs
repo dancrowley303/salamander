@@ -12,6 +12,11 @@ namespace com.defrobo.salamander
         private readonly Dictionary<long, List<OrderBookSnapshotEventArgs>> orderBookSnapshotEvents = new Dictionary<long, List<OrderBookSnapshotEventArgs>>();
         private readonly Dictionary<long, List<MarketTickEventArgs>> marketTickEvents = new Dictionary<long, List<MarketTickEventArgs>>();
 
+        private readonly object lockExecutionEvents = new object();
+        private readonly object lockOrderBookUpdateEvents = new object();
+        private readonly object lockOrderBookSnapshotEvents = new object();
+        private readonly object lockMarketTickEvents = new object();
+
         private readonly IAlerter alerter;
 
         private DateTime startTime;
@@ -37,13 +42,16 @@ namespace com.defrobo.salamander
 
             var marketTickEventArgs = new MarketTickEventArgs[] { e };
 
-            if (!marketTickEvents.ContainsKey(elapsedTicks))
+            lock (lockMarketTickEvents)
             {
-                marketTickEvents.Add(elapsedTicks, new List<MarketTickEventArgs>(marketTickEventArgs));
-            }
-            else
-            {
-                marketTickEvents[elapsedTicks].AddRange(marketTickEventArgs);
+                if (!marketTickEvents.ContainsKey(elapsedTicks))
+                {
+                    marketTickEvents.Add(elapsedTicks, new List<MarketTickEventArgs>(marketTickEventArgs));
+                }
+                else
+                {
+                    marketTickEvents[elapsedTicks].AddRange(marketTickEventArgs);
+                }
             }
         }
 
@@ -53,13 +61,16 @@ namespace com.defrobo.salamander
 
             var orderBookSnapshotEventArgs = new OrderBookSnapshotEventArgs[] { e };
 
-            if (!orderBookSnapshotEvents.ContainsKey(elapsedTicks))
+            lock (lockOrderBookSnapshotEvents)
             {
-                orderBookSnapshotEvents.Add(elapsedTicks, new List<OrderBookSnapshotEventArgs>(orderBookSnapshotEventArgs));
-            }
-            else
-            {
-                orderBookSnapshotEvents[elapsedTicks].AddRange(orderBookSnapshotEventArgs);
+                if (!orderBookSnapshotEvents.ContainsKey(elapsedTicks))
+                {
+                    orderBookSnapshotEvents.Add(elapsedTicks, new List<OrderBookSnapshotEventArgs>(orderBookSnapshotEventArgs));
+                }
+                else
+                {
+                    orderBookSnapshotEvents[elapsedTicks].AddRange(orderBookSnapshotEventArgs);
+                }
             }
         }
 
@@ -69,13 +80,16 @@ namespace com.defrobo.salamander
 
             var orderBookUpdateEventArgs = new OrderBookUpdateEventArgs[] { e };
 
-            if (!orderBookUpdateEvents.ContainsKey(elapsedTicks))
+            lock (lockOrderBookUpdateEvents)
             {
-                orderBookUpdateEvents.Add(elapsedTicks, new List<OrderBookUpdateEventArgs>(orderBookUpdateEventArgs));
-            }
-            else
-            {
-                orderBookUpdateEvents[elapsedTicks].AddRange(orderBookUpdateEventArgs);
+                if (!orderBookUpdateEvents.ContainsKey(elapsedTicks))
+                {
+                    orderBookUpdateEvents.Add(elapsedTicks, new List<OrderBookUpdateEventArgs>(orderBookUpdateEventArgs));
+                }
+                else
+                {
+                    orderBookUpdateEvents[elapsedTicks].AddRange(orderBookUpdateEventArgs);
+                }
             }
         }
 
@@ -85,13 +99,16 @@ namespace com.defrobo.salamander
 
             var executionEventArgs = new ExecutionEventArgs[] { e };
 
-            if (!executionEvents.ContainsKey(elapsedTicks))
+            lock (lockExecutionEvents)
             {
-                executionEvents.Add(elapsedTicks, new List<ExecutionEventArgs>(executionEventArgs));
-            }
-            else
-            {
-                executionEvents[elapsedTicks].AddRange(executionEventArgs);
+                if (!executionEvents.ContainsKey(elapsedTicks))
+                {
+                    executionEvents.Add(elapsedTicks, new List<ExecutionEventArgs>(executionEventArgs));
+                }
+                else
+                {
+                    executionEvents[elapsedTicks].AddRange(executionEventArgs);
+                }
             }
         }
 
@@ -102,26 +119,32 @@ namespace com.defrobo.salamander
 
         public void Save(string filePath)
         {
-            var backTestData = new BackTestData()
+            var backTestData = new BackTestData();
+            lock (lockExecutionEvents)
             {
-                ExecutionEvents = new Dictionary<long, List<ExecutionEventArgs>>(executionEvents),
-                OrderBookUpdateEvents = new Dictionary<long, List<OrderBookUpdateEventArgs>>(orderBookUpdateEvents),
-                OrderBookSnapshotEvents = new Dictionary<long, List<OrderBookSnapshotEventArgs>>(orderBookSnapshotEvents),
-                MarketTickEvents = new Dictionary<long, List<MarketTickEventArgs>>(marketTickEvents)
-            };
+                backTestData.ExecutionEvents = new Dictionary<long, List<ExecutionEventArgs>>(executionEvents);
+                executionEvents.Clear();
+            }
+            lock (lockOrderBookUpdateEvents)
+            {
+                backTestData.OrderBookUpdateEvents = new Dictionary<long, List<OrderBookUpdateEventArgs>>(orderBookUpdateEvents);
+                orderBookUpdateEvents.Clear();
+            }
+            lock (lockOrderBookSnapshotEvents)
+            {
+                backTestData.OrderBookSnapshotEvents = new Dictionary<long, List<OrderBookSnapshotEventArgs>>(orderBookSnapshotEvents);
+                orderBookSnapshotEvents.Clear();
+            }
+            lock (lockMarketTickEvents)
+            {
+                backTestData.MarketTickEvents = new Dictionary<long, List<MarketTickEventArgs>>(marketTickEvents);
+                marketTickEvents.Clear();
+            }
 
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
                 Serializer.Serialize<BackTestData>(fileStream, backTestData);
             }
-        }
-
-        public void Clear()
-        {
-            executionEvents.Clear();
-            orderBookUpdateEvents.Clear();
-            orderBookSnapshotEvents.Clear();
-            marketTickEvents.Clear();
         }
 
         public void Stop()

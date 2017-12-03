@@ -21,7 +21,6 @@ namespace salamander.backtestrecorder
 
         private static string DateSuffixGenerator(Boolean? lastWrite)
         {
-            //return DateTime.Now.ToString("yyyy-MM-dd-HH");
             if (lastWrite.HasValue && lastWrite.Value)
             {
                 return DateTime.Now.ToString("yyyy-MM-dd-HH");
@@ -40,7 +39,6 @@ namespace salamander.backtestrecorder
         private static void Start()
         {
             DateTime now = DateTime.Now;
-
             timer = new Timer(CaptureToOutput, filePath, TimeSpan.FromSeconds(3600 - (now.Minute * 60 + now.Second)), TimeSpan.FromHours(1));
             backTestRecorder.Record();
         }
@@ -48,7 +46,6 @@ namespace salamander.backtestrecorder
         private static void Stop()
         {
             backTestRecorder.Stop();
-            backTestRecorder.Clear();
         }
 
         private static void CaptureToOutput(object state)
@@ -57,7 +54,6 @@ namespace salamander.backtestrecorder
             var fullFilePath = MakeFilePath(lastWrite);
             Console.WriteLine("Writing to {0}", fullFilePath);
             backTestRecorder.Save(fullFilePath);
-            backTestRecorder.Clear();
         }
     }
 }
